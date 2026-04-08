@@ -8,7 +8,7 @@ public class ExServoCR {
     CRServo crServo;
 
     public ExServoCR(String name, OpMode opmode) {
-        this.crServo = (CRServo) opmode.hardwareMap.get(CRServo.class, name);
+        this.crServo = opmode.hardwareMap.get(CRServo.class, name);
     }
 
     public void setPower(double speed) {

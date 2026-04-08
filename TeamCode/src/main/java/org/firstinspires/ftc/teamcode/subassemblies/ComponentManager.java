@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.subassemblies;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.automove.AutoMove;
 import org.firstinspires.ftc.teamcode.EasyHardware.Chassis;
 
@@ -14,6 +17,12 @@ public class ComponentManager extends LinearOpMode{
     Chassis chassis;
     Gate gate;
     int targetSpeed;
+    colorFinder colorFinder;
+    public enum detectedColor{
+        GREEN,
+        PURPLE,
+        UNKNOWN
+    }
 //    AutoMove autoMove;
     public ComponentManager(LinearOpMode opMode){
         this.opMode = opMode;
@@ -149,6 +158,10 @@ public class ComponentManager extends LinearOpMode{
 
     public void gateOpen(){
         gate.open();
+    }
+
+    public detectedColor getDetectedColor(){
+        return colorFinder.getColor();
     }
 
 
