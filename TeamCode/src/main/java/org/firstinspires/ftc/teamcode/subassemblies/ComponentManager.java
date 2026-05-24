@@ -1,23 +1,24 @@
 package org.firstinspires.ftc.teamcode.subassemblies;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.automove.AutoMove;
 import org.firstinspires.ftc.teamcode.EasyHardware.Chassis;
-
-import java.util.Objects;
 
 public class ComponentManager extends LinearOpMode{
     LinearOpMode opMode;
-    Launcher launcher;
+    LauncherOne launcherOne;
+    LauncherTwo launcherTwo;
     public Intake intake;
     Chassis chassis;
     Gate gate;
+    LaunchAngler launchAngler;
     int targetSpeed;
     colorFinder colorFinder;
+    public enum LaunchPosition {
+        FAR,
+        CLOSE,
+        BACK
+    }
     public enum detectedColor{
         GREEN,
         PURPLE,
@@ -26,108 +27,21 @@ public class ComponentManager extends LinearOpMode{
 //    AutoMove autoMove;
     public ComponentManager(LinearOpMode opMode){
         this.opMode = opMode;
-        this.launcher = new Launcher(opMode);
+        this.launcherOne = new LauncherOne(opMode);
+        this.launcherTwo = new LauncherTwo(opMode);
         this.intake = new Intake(opMode);
         this.gate = new Gate(opMode);
+        this.launchAngler = new LaunchAngler(opMode);
         this.chassis = new Chassis(opMode);
-//        this.autoMove = new AutoMove(this,"odo",0,0,0);
     }
-    public void sleepThing(int Datime){
-        chassis.driveDirection(0,0,0,0);
-        sleep(Datime);
+    public void shootBack(String distance, int LaunchDelay){
+        launchAngler.setLaunchAnglerPos(LaunchPosition.BACK);
     }
-    public void shootWithSleep(String distance, int LaunchDelay){
-        if (Objects.equals(distance, "far")) {
-            targetSpeed = -1000;
-        } else if (Objects.equals(distance, "moose")) {
-            targetSpeed = -900;
-        }
-        else{
-            targetSpeed = -1660;
-        }
-        gate.close();
-        chassis.driveDirection(0,0,0,0);
-        launcher.setVelocity(targetSpeed - 150);
-        gate.open();
-        sleep(400);
-
-        intake.setPower(1);
-        sleep(LaunchDelay);
-        intake.setPower(0);
-        launcher.setVelocity(targetSpeed);
-        sleep(LaunchDelay + 100);
-
-        intake.setPower(1);
-        sleep(LaunchDelay);
-        intake.setPower(0);
-        sleep(LaunchDelay + 200);
-
-        intake.setPower(1);
-        sleep(LaunchDelay + 500);
-        intake.setPower(0);
-        sleep(LaunchDelay + 200);
-
-        gate.close();
-        launcher.setVelocity(targetSpeed);
-        intake.setPower(0);
+    public void shootFar(int LaunchDelay){
+        launchAngler.setLaunchAnglerPos(LaunchPosition.FAR);
     }
-    public void shootNearest(int LaunchDelay){
-        targetSpeed = -1535;
-
-        gate.close();
-        chassis.driveDirection(0,0,0,0);
-        launcher.setVelocity(targetSpeed - 170);
-        gate.open();
-        sleep(400);
-
-        intake.setPower(1);
-        sleep(LaunchDelay);
-        intake.setPower(0);
-        launcher.setVelocity(targetSpeed);
-        sleep(LaunchDelay + 100);
-
-        intake.setPower(1);
-        sleep(LaunchDelay);
-        intake.setPower(0);
-        sleep(LaunchDelay + 200);
-
-        intake.setPower(1);
-        sleep(LaunchDelay + 500);
-        intake.setPower(0);
-        sleep(LaunchDelay + 200);
-
-        gate.close();
-        launcher.setVelocity(targetSpeed);
-        intake.setPower(0);
-    }
-    public void shootBack(int LaunchDelay) {
-        targetSpeed = -6000;
-
-        gate.close();
-        chassis.driveDirection(0, 0, 0, 0);
-        launcher.setVelocity(targetSpeed - 170);
-        gate.open();
-        sleep(1000);
-
-        intake.setPower(1);
-        sleep(LaunchDelay);
-        intake.setPower(0);
-        launcher.setVelocity(targetSpeed);
-        sleep(1000);
-
-        intake.setPower(1);
-        sleep(LaunchDelay);
-        intake.setPower(0);
-        sleep(1000);
-
-        intake.setPower(1);
-        sleep(LaunchDelay + 500);
-        intake.setPower(0);
-        sleep(LaunchDelay + 200);
-
-        gate.close();
-        launcher.setVelocity(targetSpeed);
-        intake.setPower(0);
+    public void shootClose(int LaunchDelay){
+        launchAngler.setLaunchAnglerPos(LaunchPosition.CLOSE);
     }
     public void intakeOn(){
         gate.close();
@@ -141,7 +55,7 @@ public class ComponentManager extends LinearOpMode{
         intake.setPower(0);
     }
     public void laucherOn(){
-        launcher.setVelocity(-1900);
+        launcherOne.setVelocity(-1900);
     }
 //    public void goToLocation(int x,int y,int r){
 //        while (!autoMove.goToPos(x, y)) {
