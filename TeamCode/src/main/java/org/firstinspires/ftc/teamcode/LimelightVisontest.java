@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 public class LimelightVisontest extends LinearOpMode {
 
     private Limelight3A limelight;
+    double distanceToApriltag;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -18,7 +19,7 @@ public class LimelightVisontest extends LinearOpMode {
 
         telemetry.setMsTransmissionInterval(11);
 
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(8);
         waitForStart();
         /*
          * Starts polling for data.
@@ -30,10 +31,12 @@ public class LimelightVisontest extends LinearOpMode {
             if (result != null) {
                 if (result.isValid()) {
                     Pose3D botpose = result.getBotpose();
-                    telemetry.addData("tx", result.getTx());
-                    telemetry.addData("ty", result.getTy());
+//                    distanceToApriltag = tagDistance(result.getTa());
+                    telemetry.addData("Tag Distance", distanceToApriltag);
+                    telemetry.addData("Target X", result.getTx());
+                    telemetry.addData("Target Area", result.getTa());
                     telemetry.addData("Botpose", botpose.toString());
-                    telemetry.addData("Staus", "Target acquired");
+                    telemetry.addData("Staus", "Apriltag acquired");
                 }
                 else telemetry.addData("Staus", "No target");
             }
@@ -41,4 +44,5 @@ public class LimelightVisontest extends LinearOpMode {
             telemetry.update();
         }
     }
+
 }
