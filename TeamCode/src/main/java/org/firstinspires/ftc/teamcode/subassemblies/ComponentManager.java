@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.EasyHardware.Chassis;
 
+import java.util.Objects;
+
 public class ComponentManager extends LinearOpMode{
     LinearOpMode opMode;
     LauncherOne launcherOne;
@@ -42,6 +44,44 @@ public class ComponentManager extends LinearOpMode{
     }
     public void shootClose(int LaunchDelay){
         launchAngler.setLaunchAnglerPos(LaunchPosition.CLOSE);
+    }
+    public void shootWithSleep(String distance, int LaunchDelay){
+        if (Objects.equals(distance, "far")) {
+            targetSpeed = -1000;
+        } else if (Objects.equals(distance, "moose")) {
+            targetSpeed = -900;
+        }
+        else{
+            targetSpeed = -1660;
+        }
+        gate.close();
+        chassis.driveDirection(0,0,0,0);
+        launcherOne.setVelocity(targetSpeed - 150);
+        launcherTwo.setVelocity(-(targetSpeed - 150));
+        gate.open();
+        sleep(400);
+
+        intake.setPower(1);
+        sleep(LaunchDelay);
+        intake.setPower(0);
+        launcherOne.setVelocity(targetSpeed);
+        launcherTwo.setVelocity(-targetSpeed);
+        sleep(LaunchDelay + 100);
+
+        intake.setPower(1);
+        sleep(LaunchDelay);
+        intake.setPower(0);
+        sleep(LaunchDelay + 200);
+
+        intake.setPower(1);
+        sleep(LaunchDelay + 500);
+        intake.setPower(0);
+        sleep(LaunchDelay + 200);
+
+        gate.close();
+        launcherOne.setVelocity(targetSpeed);
+        launcherTwo.setVelocity(-targetSpeed);
+        intake.setPower(0);
     }
     public void intakeOn(){
         gate.close();
