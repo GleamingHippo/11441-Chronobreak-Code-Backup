@@ -46,6 +46,15 @@ public class AutoMove{
 
         return false;
     }
+    public double odoX(){
+        this.odo.update();
+        return this.odo.getX();
+    }
+    public double odoY(){
+        this.odo.update();
+        return this.odo.getY();
+    }
+
 
     public boolean goToRotation(double a){
         this.goalAngle = a;

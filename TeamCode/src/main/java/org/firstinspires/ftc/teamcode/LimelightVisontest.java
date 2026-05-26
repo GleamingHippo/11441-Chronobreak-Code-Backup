@@ -15,11 +15,11 @@ public class LimelightVisontest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException
     {
-        limelight = hardwareMap.get(Limelight3A.class, "Limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         telemetry.setMsTransmissionInterval(11);
 
-        limelight.pipelineSwitch(8);
+        limelight.pipelineSwitch(0);
         waitForStart();
         /*
          * Starts polling for data.
@@ -44,5 +44,4 @@ public class LimelightVisontest extends LinearOpMode {
             telemetry.update();
         }
     }
-
 }
