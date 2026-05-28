@@ -7,7 +7,7 @@ public class Gate {
     ExServoSimple gate;
 
     public Gate(OpMode opmode) {
-        gate = new ExServoSimple("flip_servo", opmode);
+        gate = new ExServoSimple("gate", opmode);
     }
     public void open(){
         gate.setPosition(-0.8);

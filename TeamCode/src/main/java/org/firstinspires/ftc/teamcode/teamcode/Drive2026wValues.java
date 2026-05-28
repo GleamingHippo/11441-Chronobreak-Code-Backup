@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teamcode;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -7,14 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.EasyHardware.Chassis;
-//import org.firstinspires.ftc.teamcode.ExLibrary.ComputerVisonDecode;
 import org.firstinspires.ftc.teamcode.EasyHardware.ExMotor;
 import org.firstinspires.ftc.teamcode.EasyHardware.ExServo;
-import org.firstinspires.ftc.teamcode.subassemblies.Cords;
-import org.firstinspires.ftc.teamcode.automove.AutoMove;
 
 @TeleOp
-public class Drive2026 extends OpMode {
+public class Drive2026wValues extends OpMode {
     //~~~~~~~~~~~~~~~~~create objects~~~~~~~~~~~~~~~~~
 //    DistanceSensor ballDetectorFront;
     Chassis chassis;
@@ -38,33 +35,28 @@ public class Drive2026 extends OpMode {
     double maxDistance = 100;
     double maxSpeed = 3000;
     double minSpeed = 1000;
-    double robotX = 0;
-    double robotY = 0;
 
-    AutoMove autoMove;
     @Override
     public void init() { //~~~~~~~initialization code~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         this.chassis = new Chassis(this); //~~~~~~~~~assign chassis object to chassis class~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         this.shootMotorTwo = new ExMotor("shoot_motor_two", this);
-           this.shootMotorOne = new ExMotor("shoot_motor_one", this);  //~~~~~~~~~assign shootMotorOne object to ExMotor class~~~~~~~~~~~~~~~~~~~
+        this.shootMotorOne = new ExMotor("shoot_motor_one", this);  //~~~~~~~~~assign shootMotorOne object to ExMotor class~~~~~~~~~~~~~~~~~~~
         this.shootMotorTwo.ZeroPowerCoast();
         this.shootMotorOne.ZeroPowerCoast(); //~~~~~~~~~make it so that the shoot motor does not break, but rather coasts~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         this.intake = new ExMotor("intake", this); //~~~~~~~~~assign intake object to ExMotor class~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         this.gate = new ExServo("gate", this, 2); //~~~~~~~~~assign gate object to servo class, type simple~~~~~~~~~
-        this.gate = new ExServo("launch_angler", this, 2);
-        autoMove = Cords.saved_move;
 
         this.telemetry.addData("Status", "Initialized"); //~~~~~~~~~~~~~add the status to telemetry class~~~~~~~~~~~~~
-//        if (limelightActive) {
-//            limelight = hardwareMap.get(Limelight3A.class, "limelight");
-//
-//            limelight.pipelineSwitch(8);
-//
-//            limelight.start();
-//        }
+        if (limelightActive) {
+            limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
+            limelight.pipelineSwitch(8);
+
+            limelight.start();
+        }
         telemetry.setMsTransmissionInterval(11);
 
         this.telemetry.update();
@@ -72,22 +64,22 @@ public class Drive2026 extends OpMode {
 
     @Override // com.qualcomm.robotcore.eventloop.opmode.OpMode
     public void loop() {
-//        if (limelightActive) {
-//            LLResult LimelightRaw = limelight.getLatestResult();
-//            if (LimelightRaw != null) {
-//                if (LimelightRaw.isValid()) {
-//                    Pose3D botpose = LimelightRaw.getBotpose();
-//                    ApriltagTx = LimelightRaw.getTx();
-//                    distanceToApriltag = tagDistance(LimelightRaw.getTa());
-//                    telemetry.addData("???", limelight.getLatestResult());
-//                    telemetry.addData("Tag Distance", distanceToApriltag);
-//                    telemetry.addData("Target X", LimelightRaw.getTx());
-//                    telemetry.addData("Target Area", LimelightRaw.getTa());
-//                    telemetry.addData("Botpose", botpose.toString());
-//                    telemetry.addData("Limelight Staus", "Apriltag acquired");
-//                } else telemetry.addData("Limelight Staus", "No target");
-//            } else telemetry.addData("Limelight Staus", "Null");
-//        }
+        if (limelightActive) {
+            LLResult LimelightRaw = limelight.getLatestResult();
+            if (LimelightRaw != null) {
+                if (LimelightRaw.isValid()) {
+                    Pose3D botpose = LimelightRaw.getBotpose();
+                    ApriltagTx = LimelightRaw.getTx();
+                    distanceToApriltag = tagDistance(LimelightRaw.getTa());
+                    telemetry.addData("???", limelight.getLatestResult());
+                    telemetry.addData("Tag Distance", distanceToApriltag);
+                    telemetry.addData("Target X", LimelightRaw.getTx());
+                    telemetry.addData("Target Area", LimelightRaw.getTa());
+                    telemetry.addData("Botpose", botpose.toString());
+                    telemetry.addData("Limelight Staus", "Apriltag acquired");
+                } else telemetry.addData("Limelight Staus", "No target");
+            } else telemetry.addData("Limelight Staus", "Null");
+        }
 
         if (this.gamepad1.right_stick_x > 0.05d && this.gamepad1.left_trigger <= 0.2d) {
             this.humanDriveSpeed = 0.7d;
@@ -125,12 +117,12 @@ public class Drive2026 extends OpMode {
             intake.setPower(1);
         }
         else intake.setPower(0);
-        robotX = autoMove.odoX();
-        robotY = autoMove.odoY();
-        double distanceToGoal = Math.sqrt(
-                Math.pow(0 - robotY, 2) +
-            Math.pow(0 - robotX, 2)
-        );
+//        robotX = odo.getX();
+//        robotY = odo.getY();
+//        double distanceToGoal = Math.sqrt(
+//            Math.pow(0 - robotX, 2) +
+//                Math.pow(0 - robotY, 2)
+//        );
 
         if (limelightActive) {
 

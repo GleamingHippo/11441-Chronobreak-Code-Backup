@@ -36,6 +36,7 @@ public class ComponentManager extends LinearOpMode{
         this.launchAngler = new LaunchAngler(opMode);
         this.chassis = new Chassis(opMode);
     }
+
     public void shootBack(String distance, int LaunchDelay){
         launchAngler.setLaunchAnglerPos(LaunchPosition.BACK);
     }
@@ -117,7 +118,6 @@ public class ComponentManager extends LinearOpMode{
     public detectedColor getDetectedColor(){
         return colorFinder.getColor();
     }
-
 
     @Override
     public void runOpMode() throws InterruptedException {

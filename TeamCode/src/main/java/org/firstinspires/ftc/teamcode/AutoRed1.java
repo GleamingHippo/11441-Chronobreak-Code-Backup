@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.automove.AutoMove;
 import org.firstinspires.ftc.teamcode.subassemblies.ComponentManager;
+import org.firstinspires.ftc.teamcode.subassemblies.Cords;
 
 @Autonomous
 
@@ -124,5 +125,6 @@ public class AutoRed1 extends LinearOpMode {
                 autoMove.motorUpdate();
             }//start
         }
+        Cords.saved_move = autoMove;
     }
 }

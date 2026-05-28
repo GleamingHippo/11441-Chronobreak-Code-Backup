@@ -7,7 +7,7 @@ public class LauncherTwo {
     ExMotor shootMotor;
 
     public LauncherTwo(OpMode opmode) {
-        shootMotor = new ExMotor("shoot_motor_2", opmode);
+        shootMotor = new ExMotor("shoot_motor_two", opmode);
         this.shootMotor.ZeroPowerCoast();
     }
     public void setVelocity(int launch_target_velocity){
