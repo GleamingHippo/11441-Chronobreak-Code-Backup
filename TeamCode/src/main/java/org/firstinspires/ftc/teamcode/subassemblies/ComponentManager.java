@@ -33,6 +33,7 @@ public class ComponentManager extends LinearOpMode{
         this.launcherTwo = new LauncherTwo(opMode);
         this.intake = new Intake(opMode);
         this.gate = new Gate(opMode);
+
         this.launchAngler = new LaunchAngler(opMode);
         this.chassis = new Chassis(opMode);
     }
@@ -113,6 +114,17 @@ public class ComponentManager extends LinearOpMode{
 
     public void gateOpen(){
         gate.open();
+    }
+    public void setLaunchAngle(int Position) {
+        if (Position == 0){
+            launchAngler.setPosition1();
+        }
+        else if (Position == 1){
+            launchAngler.setPosition2();
+        }
+        else if (Position == 2){
+            launchAngler.setPosition3();
+        }
     }
 
     public detectedColor getDetectedColor(){

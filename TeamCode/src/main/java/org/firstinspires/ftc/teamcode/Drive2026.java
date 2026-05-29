@@ -1,43 +1,39 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.EasyHardware.Chassis;
 //import org.firstinspires.ftc.teamcode.ExLibrary.ComputerVisonDecode;
 import org.firstinspires.ftc.teamcode.EasyHardware.ExMotor;
 import org.firstinspires.ftc.teamcode.EasyHardware.ExServo;
+import org.firstinspires.ftc.teamcode.subassemblies.ComponentManager;
 import org.firstinspires.ftc.teamcode.subassemblies.Cords;
 import org.firstinspires.ftc.teamcode.automove.AutoMove;
 
 @TeleOp
 public class Drive2026 extends OpMode {
     //~~~~~~~~~~~~~~~~~create objects~~~~~~~~~~~~~~~~~
-//    DistanceSensor ballDetectorFront;
     Chassis chassis;
     ExServo gate;
+    ExServo launchAngler;
     ExMotor intake;
     ExMotor shootMotorOne;
     ExMotor shootMotorTwo;
-    Limelight3A limelight;
+    ComponentManager manager;
 
     //~~~~~~~~~~~~~~~~~~create variables~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     double launchTargetSpeed = 0;
     double humanDriveSpeed = 0.5d;
-    double targetDistance = 0;
-    boolean limelightActive = false;
-    double distanceToApriltag;
-    double distanceToGoal = 0;
-    double ApriltagTx = 0;
+    boolean launchModeOVERRIDE = false;
+    float launchModeOVERRIDETimer = 0;
+    int launchPosition = 2;
 
-    //Apriltag launch speed tuning variables:
+    //automove speed ramping tuning variables:
     double minDistance = 0;
     double maxDistance = 100;
-    double maxSpeed = 3000;
-    double minSpeed = 1000;
+    double maxSpeed = 1700;
+    double minSpeed = 1500;
     double robotX = 0;
     double robotY = 0;
 
@@ -48,23 +44,17 @@ public class Drive2026 extends OpMode {
         this.chassis = new Chassis(this); //~~~~~~~~~assign chassis object to chassis class~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         this.shootMotorTwo = new ExMotor("shoot_motor_two", this);
-           this.shootMotorOne = new ExMotor("shoot_motor_one", this);  //~~~~~~~~~assign shootMotorOne object to ExMotor class~~~~~~~~~~~~~~~~~~~
+        this.shootMotorOne = new ExMotor("shoot_motor_one", this);  //~~~~~~~~~assign shootMotorOne object to ExMotor class~~~~~~~~~~~~~~~~~~~
         this.shootMotorTwo.ZeroPowerCoast();
         this.shootMotorOne.ZeroPowerCoast(); //~~~~~~~~~make it so that the shoot motor does not break, but rather coasts~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         this.intake = new ExMotor("intake", this); //~~~~~~~~~assign intake object to ExMotor class~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         this.gate = new ExServo("gate", this, 2); //~~~~~~~~~assign gate object to servo class, type simple~~~~~~~~~
-        this.gate = new ExServo("launch_angler", this, 2);
+        this.launchAngler = new ExServo("launch_angler", this, 2);
         autoMove = Cords.saved_move;
-
+        this.telemetry.addData("LAUNCH MODE OVERRIDE", "OFF");
         this.telemetry.addData("Status", "Initialized"); //~~~~~~~~~~~~~add the status to telemetry class~~~~~~~~~~~~~
-//        if (limelightActive) {
-//            limelight = hardwareMap.get(Limelight3A.class, "limelight");
-//
-//            limelight.pipelineSwitch(8);
-//
-//            limelight.start();
-//        }
+
         telemetry.setMsTransmissionInterval(11);
 
         this.telemetry.update();
@@ -72,22 +62,6 @@ public class Drive2026 extends OpMode {
 
     @Override // com.qualcomm.robotcore.eventloop.opmode.OpMode
     public void loop() {
-//        if (limelightActive) {
-//            LLResult LimelightRaw = limelight.getLatestResult();
-//            if (LimelightRaw != null) {
-//                if (LimelightRaw.isValid()) {
-//                    Pose3D botpose = LimelightRaw.getBotpose();
-//                    ApriltagTx = LimelightRaw.getTx();
-//                    distanceToApriltag = tagDistance(LimelightRaw.getTa());
-//                    telemetry.addData("???", limelight.getLatestResult());
-//                    telemetry.addData("Tag Distance", distanceToApriltag);
-//                    telemetry.addData("Target X", LimelightRaw.getTx());
-//                    telemetry.addData("Target Area", LimelightRaw.getTa());
-//                    telemetry.addData("Botpose", botpose.toString());
-//                    telemetry.addData("Limelight Staus", "Apriltag acquired");
-//                } else telemetry.addData("Limelight Staus", "No target");
-//            } else telemetry.addData("Limelight Staus", "Null");
-//        }
 
         if (this.gamepad1.right_stick_x > 0.05d && this.gamepad1.left_trigger <= 0.2d) {
             this.humanDriveSpeed = 0.7d;
@@ -98,22 +72,8 @@ public class Drive2026 extends OpMode {
         } else {
             this.humanDriveSpeed = 0.7d;
         }
-        if (limelightActive) {
-            if (gamepad2.right_trigger > 0.2) {
-                double computerTurn = 0;
-                if (ApriltagTx > 0) {
-                    computerTurn = -0.2;
-                } else if (ApriltagTx < 0) {
-                    computerTurn = -0.2;
-                }
-                this.chassis.driveDirection(0, 0, 1, computerTurn);
-            } else {
-                this.chassis.driveDirection(-this.gamepad1.left_stick_x, this.gamepad1.left_stick_y, this.humanDriveSpeed, this.gamepad1.right_stick_x);
-            }
-        }
-        else{
-            this.chassis.driveDirection(-this.gamepad1.left_stick_x, this.gamepad1.left_stick_y, this.humanDriveSpeed, this.gamepad1.right_stick_x);
-        }
+
+        this.chassis.driveDirection(-this.gamepad1.left_stick_x, this.gamepad1.left_stick_y, this.humanDriveSpeed, this.gamepad1.right_stick_x);
 
         if (this.gamepad2.right_trigger > 0.2) {
             this.gate.setPosition(-0.8);
@@ -124,62 +84,85 @@ public class Drive2026 extends OpMode {
         if (this.gamepad2.a){
             intake.setPower(1);
         }
-        else intake.setPower(0);
+        else{
+            intake.setPower(0);
+        }
+
+        //update the X&Y
         robotX = autoMove.odoX();
         robotY = autoMove.odoY();
+
+        //calculate the distance to the goal ~~~~~~~~~~~~~~~SET THIS ASAP!!!~~~~~~~~~~~~~~~~~`
         double distanceToGoal = Math.sqrt(
                 Math.pow(0 - robotY, 2) +
             Math.pow(0 - robotX, 2)
         );
 
-        if (limelightActive) {
+        //update the angle of the upper servo
+        if (distanceToGoal < 30){
+            launchPosition = 0;
+        }
+        else if (distanceToGoal < 90){
+            launchPosition = 1;
+        }
+        else{
+            launchPosition = 2;
+        }
+        manager.setLaunchAngle(launchPosition);
 
+        //use the left trigger
+        if (gamepad2.left_trigger > 0.2){
             //calculate target launch speed
             double targetLaunchSpeed =
                 maxSpeed -
-                    ((distanceToApriltag - minDistance) / (maxDistance - minDistance))
+                    ((distanceToGoal - minDistance) / (maxDistance - minDistance))
                         * (maxSpeed - minSpeed);
             // Clamp to limits
             targetLaunchSpeed = Math.max(minSpeed, Math.min(maxSpeed, targetLaunchSpeed));
 
-            if (this.gamepad2.b) {
-                shootMotorOne.setPower(targetLaunchSpeed);
-                shootMotorTwo.setPower(-targetLaunchSpeed);
-            } else {
-                shootMotorOne.setPower(0);
-                shootMotorTwo.setPower(0);
+            if (this.gamepad2.x){
+                launchModeOVERRIDETimer += 0.1F;
             }
-        }
-        else{
-            if (gamepad2.left_trigger > 0.2){
-                //calculate target launch speed
-                double targetLaunchSpeed =
-                    maxSpeed -
-                        ((distanceToGoal - minDistance) / (maxDistance - minDistance))
-                            * (maxSpeed - minSpeed);
-                // Clamp to limits
-                targetLaunchSpeed = Math.max(minSpeed, Math.min(maxSpeed, targetLaunchSpeed));
+            else if (!launchModeOVERRIDE){
+                launchModeOVERRIDETimer = 0;
+            }
+            if (launchModeOVERRIDETimer == 10){
+                launchModeOVERRIDE = true;
+            }
 
-                if (this.gamepad2.b) {
+            if (!launchModeOVERRIDE) this.telemetry.addData("LAUNCH MODE OVERRIDE", "OFF");
+            else this.telemetry.addData("LAUNCH MODE OVERRIDE", "!!!!!!!!!!!!!ON!!!!!!!!!!!!!!");
+
+            if (!launchModeOVERRIDE) {
+                if (this.gamepad2.dpad_left) {
                     shootMotorOne.setPower(targetLaunchSpeed);
                     shootMotorTwo.setPower(-targetLaunchSpeed);
+                } else if (this.gamepad2.dpad_right) {
+                    shootMotorOne.setPower(2000);
+                    shootMotorTwo.setPower(-2000);
                 } else {
                     shootMotorOne.setPower(0);
                     shootMotorTwo.setPower(0);
                 }
             }
+
+            else{
+                if (this.gamepad2.dpad_up) launchTargetSpeed = -1600;
+                else if (this.gamepad2.dpad_left) launchTargetSpeed = -1700;
+                else if (this.gamepad2.dpad_right) launchTargetSpeed = -1500;
+                else launchTargetSpeed = 0;
+            }
+
         }
 
         this.telemetry.update();
     }
+
     @Override
+
     public void stop() {
         chassis.driveDirection(0,0,0,0);
         this.telemetry.addData("Status", "Stopped");
         this.telemetry.update();
-    }
-    public double tagDistance (double ta){
-        double scale = 0; //scale from math site
-        return (scale / ta);
     }
 }
